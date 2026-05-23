@@ -1,29 +1,19 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
 
 
-class UserCreate(BaseModel):
-    email: EmailStr
-    password: str
-
-
-class UserOut(BaseModel):
-    id: int
-    email: str
-
-    class Config:
-        from_attributes = True
-
-
 class ExpenseCreate(BaseModel):
+    amount: float = Field(..., gt=0, description="Amount must be greater than 0")
+    category: str
+    description: Optional[str] = ""
+
+
+class ExpenseOut(BaseModel):
+    id: int
     amount: float
     category: str
-    description: Optional[str] = None
-
-
-class ExpenseOut(ExpenseCreate):
-    id: int
+    description: str
     created_at: datetime
 
     class Config:
@@ -32,12 +22,9 @@ class ExpenseOut(ExpenseCreate):
 
 class BudgetCreate(BaseModel):
     category: str
-    limit_amount: float
-    alert_threshold: float = 0.8
+    limit: float = Field(..., gt=0)
 
 
-class BudgetOut(BudgetCreate):
-    id: int
-
-    class Config:
-        from_attributes = True
+class UserCreate(BaseModel):
+    email: str
+    password: str
